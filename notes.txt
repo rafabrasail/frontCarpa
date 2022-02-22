@@ -6,3 +6,7 @@ https://github.com/pmndrs/react-three-fiber
 https://github.com/pmndrs/drei
 https://github.com/pmndrs/use-cannon
 
+#conversions to 3D objects
+https://github.com/CesiumGS/gltf-pipeline
+
+

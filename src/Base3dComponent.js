@@ -1,7 +1,7 @@
-import React from 'react';
+import { React, Suspense, useRef } from 'react';
 import "./index.css";
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei";
+import { OrbitControls, useGLTF } from "@react-three/drei";
 import { Physics, useBox, usePlane } from "@react-three/cannon"
 
 function Box() {
@@ -29,6 +29,28 @@ function Plane() {
     )
 }
 
+function Model({ ...props }) {
+  const group = useRef()
+  const { nodes, materials } = useGLTF('IRB120_3-58_IRC5_Base.rev1.glb')
+  return (
+    <group ref={group} {...props} dispose={null}>
+      <mesh geometry={nodes.Cube.geometry} material={materials.Material} />
+      <mesh
+        geometry={nodes['IRB120_3-58_IRC5_Base_rev1'].geometry}
+        material={nodes['IRB120_3-58_IRC5_Base_rev1'].material}
+        rotation={[Math.PI / 2, 0, 0]}
+      />
+    </group>
+  )
+}
+
+// function BaseIRB() {
+//     const {nodes, materials} = useGLTF('./static/IRB120_3-58_IRC5_Base.rev2.gltf')
+//     return (
+//         <mesh geometry={nodes.robot.geometry} material={materials.metal} />
+//     )    
+// }
+
 export default function Base3dComponent() {
     return (
         <div className='canvas'>
@@ -40,6 +62,10 @@ export default function Base3dComponent() {
                     <Box />
                     <Plane />
                 </Physics>
+                <Suspense fallback={null}>
+                    <Model />
+                </Suspense>
+                
             </Canvas>
         </div>
     )
