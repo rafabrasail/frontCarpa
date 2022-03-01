@@ -1,8 +1,10 @@
 import { React, Suspense, useRef } from 'react';
 import "./index.css";
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useThree, useFrame } from "@react-three/fiber";
 import { OrbitControls, useGLTF } from "@react-three/drei";
 import { Physics, useBox, usePlane } from "@react-three/cannon"
+import * as THREE from 'three'
+import AxisComponent from './basic/AxisComponent';
 
 function Box() {
     const [ref, api] = useBox(() => ({ mass: 1 }));
@@ -44,6 +46,7 @@ function Model({ ...props }) {
   )
 }
 
+
 // function BaseIRB() {
 //     const {nodes, materials} = useGLTF('./static/IRB120_3-58_IRC5_Base.rev2.gltf')
 //     return (
@@ -54,17 +57,16 @@ function Model({ ...props }) {
 export default function Base3dComponent() {
     return (
         <div className='canvas'>
-            <Canvas>
+            <Canvas camera={{ up: [0, 0, 1], position: [10, -10, 10]}}>
                 <OrbitControls />
                 <ambientLight intensity={0.5} />
                 <spotLight position={[10, 15, 10]} angle={0.3} />
-                <Physics>
-                    <Box />
-                    <Plane />
-                </Physics>
-                <Suspense fallback={null}>
+                <AxisComponent position={[0,0,0]} rotation={[0, 0, 0]} />
+                <AxisComponent position={[3,4,5]} rotation={[Math.PI/4, 0, 0]} />
+
+                {/* <Suspense fallback={null}>
                     <Model />
-                </Suspense>
+                </Suspense> */}
                 
             </Canvas>
         </div>
