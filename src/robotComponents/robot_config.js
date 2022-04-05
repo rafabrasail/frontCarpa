@@ -1,44 +1,65 @@
 import React, {useState, useEffect} from 'react';
 import axios from 'axios';
+import '../index.css';
 import {server, robots, joints, points} from '../common';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faImage, faMusic, faFilm, faFileAlt } from '@fortawesome/free-solid-svg-icons'
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+// import { faImage, faMusic, faFilm, faFileAlt } from '@fortawesome/free-solid-svg-icons'
 import JuntaComponent from './JuntaComponent';
+
+
 
 export default function ConfigRobotComponent() {
 
-  const [apis,setApis] = useState([]);
+    const [apis,setApis] = useState([]);
+    const [param, setParam] = useState('default');
 
-// async function getRobots(){
-//     return axios
-//         .get(`${server}/Robot/`)
-//         .then(res => res.data);
-// }
 
-//   async function fetchRobots() {
-//     await getRobots().then(setApis)
-//   }
-
-  useEffect(() => {
-    async function getRobots(){
-      try {
-        const response = await axios.get(`${server}/Robot/`)
-        setApis(response.data)
-      } catch(error) {
-        console.error(error)
+    useEffect(() => {
+      async function getRobots(){
+        try {
+          const response = await axios.get(`${server}/Robot/`)
+          setApis(response.data)
+          console.log(response.data)
+        } catch(error) {
+          console.error(error)
+        }
       }
-    }
-    getRobots()
-  }, [])  
-
-  // useEffect(() => {
-  //   console.log('renderizou')
-  //   fetchRobots()
-  // }, [])
+      getRobots()
+    }, [])  
 
 
     return(
     <div className="container">
+      <div className="columns">
+        <div className="column is-one-quarter">
+
+          <fieldset className="fieldset">
+            <legend>Robot</legend>
+              <div className="select">
+                <select onChange={e => setParam(e.target.value)}>
+                  <option value='default'>Select robot</option>
+                  {apis.map((api, key) => (
+                    <option key={api.id} value={api.id}>{api.name}</option>
+                  ))}      
+                </select>
+              </div>
+
+          </fieldset>
+
+        </div>
+        <div className="column">
+       
+          <fieldset className="fieldset">
+            <legend>Robot Configuration: {param === "default" ? 'Choose robot' : `${apis[parseInt(param)-1].name}`} </legend>
+            <p>Teste para ver se consigo</p>
+          </fieldset>
+      
+        </div>
+      </div>
+
+
+
+
       <h1><b>Statico</b></h1>
       {robots.map((robot) => (
         <h1 key={robot.id}>{robot.id}: {robot.name}</h1>
@@ -48,25 +69,11 @@ export default function ConfigRobotComponent() {
         <h1 key={api.id}>{api.id}: {api.name}</h1>
       ))}      
 
+
+
     </div> //</container>     
-
-        // <Container>     
-
-        //   {/* Radio buttom for choose the robot */}
-        //   <Control style={{padding: 20}}>
-        //     {radioButtonRobot.map((robot, key) => {
-        //       return(
-        //           <Label key={key}>
-        //               <Radio 
-        //                 name="robot" 
-        //                 value={robot.id}
-        //                 onChange={e => setRobotChoice(e.target.value)} /> {robot.name}
-        //           </Label>
-        //       )
-        //     })}
-        //   </Control>
-
-        //   <h1>{robotChoice}</h1>
+    )
+};
      
         //   <Column.Group>
         //     <Column>
@@ -133,5 +140,3 @@ export default function ConfigRobotComponent() {
         //   </Column.Group>
 
         // </Container>
-    )
-};

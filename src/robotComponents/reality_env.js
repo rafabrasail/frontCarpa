@@ -1,16 +1,99 @@
-import { React, Suspense, useRef } from 'react';
+import React, { useRef, useEffect, Component } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import Stats from 'three/examples/jsm/libs/stats.module'
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+const Base3dComponent = () => {
+  const mountRef = useRef(null);
+  let model
 
-export default function Base3dComponent() {
-    return(
-        <div>My 3d</div>
-    )
+  useEffect(() => {
+    //Data from the canvas
+    const currentRef = mountRef.current;
+    const { clientWidth: width, clientHeight: height } = currentRef;
+
+    //Scene, camera, renderer
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, width / height, 1, 1000);
+    scene.add(camera);
+    camera.up.set(0, 0, 1);
+    camera.position.set(0,150, 50);    
+    camera.lookAt(new THREE.Vector3());
+
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(width, height);
+    currentRef.appendChild(renderer.domElement);
+
+    //OrbitControls
+    const orbitControls = new OrbitControls(camera, renderer.domElement);
+    orbitControls.enableDamping = true;
+
+    //Resize canvas
+    const resize = () => {
+      renderer.setSize(currentRef.clientWidth, currentRef.clientHeight);
+      camera.aspect = currentRef.clientWidth / currentRef.clientHeight;
+      camera.updateProjectionMatrix();
+    };
+    window.addEventListener("resize", resize);
+
+    //Animate the scene
+    const animate = () => {
+      orbitControls.update();
+      renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+    };
+    animate();
+
+    //Light
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1);
+    scene.add(ambientLight);
+
+
+    //Grid
+    const grid = new THREE.GridHelper( 100, 100 );
+    grid.geometry.rotateX( Math.PI / 2 );
+    grid.material.opacity = 0.25;
+    grid.material.transparent = true;
+    scene.add( grid );
+
+
+
+    // //cube
+    // const cube = new THREE.Mesh(
+    //   new THREE.BoxBufferGeometry(1, 1, 1),
+    //   new THREE.MeshBasicMaterial()
+    // );
+    // scene.add(cube);
+
+    //loader
+    const gltfLoader = new GLTFLoader();
+    gltfLoader.load('./modules/carpa/carpaUp.glb', 
+    function(gltf) {
+        model = gltf.scene
+        model.rotateX(  Math.PI / 2 )
+        model.rotateY(  Math.PI )
+        // model.geometry.rotateX( Math.PI / 2 );
+        scene.add( model )
+    });
+
+
+    return () => {
+      window.removeEventListener("resize", resize);
+      currentRef.removeChild(renderer.domElement);
+    };
+  }, []);
+
+  return (
+    <div
+      className='Contenedor3D container'
+      ref={mountRef}
+      style={{ width: "100%", height: "100vh" }}
+    ></div>
+  );
 }
 
-
+export default Base3dComponent;
 
 
 
