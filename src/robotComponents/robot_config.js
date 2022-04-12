@@ -1,51 +1,15 @@
 import React, {useState, useEffect} from 'react';
-import axios from 'axios';
 import '../index.css';
-import {server} from '../common';
 
 
-export default function ConfigRobotComponent() {
-    const [apis,setApis] = useState([]);
-    const [param, setParam] = useState('default');
+export default function ConfigRobotComponent(props) {
+
     const [toggleTabState, setToggleTabState] = useState(1);
-    const [joints, setJoints] = useState([])
+    // const [param, setParam] = useState('default');
 
     const toggleTab = (index) => {
       setToggleTabState(index);
     }
-
-    useEffect(() => {
-      async function getRobots(){
-        try {
-          const response = await axios.get(`${server}/Robot/`)
-          setApis(response.data)
-        } catch(error) {
-          console.error(error)
-        }
-      }
-      getRobots()
-    }, [])  
-
-    useEffect(() => {
-      // console.log(param)
-      let j
-      if (param == 'default') {
-        j = []
-      } else {
-        j = apis[(param)-1].joints
-      };
-
-      async function getJoints(urls){
-        // console.log(urls)
-        const res = await Promise.all(urls.map(u => fetch(u)))
-        const jsons = await Promise.all(res.map(r => r.json()))
-        // console.log(jsons)
-        setJoints(jsons)
-        
-      }
-      getJoints(j)
-      
-    }, [param])
 
     return(
     <div className="container">
@@ -55,9 +19,9 @@ export default function ConfigRobotComponent() {
           <fieldset className="fieldset">
             <legend>Robot</legend>
               <div className="select">
-                <select onChange={e => setParam(e.target.value)}>
+                <select onChange={e => props.changeParam(e.target.value)}>
                   <option value='default'>Select robot</option>
-                  {apis.map((api, key) => (
+                  {props.apis.map((api, key) => (
                     <option key={api.id} value={api.id}>{api.name}</option>
                   ))}      
                 </select>
@@ -66,10 +30,10 @@ export default function ConfigRobotComponent() {
           </fieldset>
 
         </div>
-        <div className="column">
+         <div className="column">
        
           <fieldset className="fieldset">
-            <legend>Robot Configuration: {param === "default" ? 'Choose robot' : `${apis[parseInt(param)-1].name}`} </legend>
+            <legend>Robot Configuration: {props.param === "default" ? 'Choose robot' : `${props.apis[parseInt(props.param)-1].name}`} </legend>
 
               <div className="tabs is-centered">
                 <ul>
@@ -89,12 +53,12 @@ export default function ConfigRobotComponent() {
               </div>  
               
               <div className={toggleTabState === 1 ? "tabcontent active-content" : "tabcontent"}>
-                <h3>{param === "default" ? 
+                <h3>{props.param === "default" ? 
                               'Screw Theory Configuration' : 
-                              `${apis[parseInt(param)-1].name} Screw Theory Configuration`}
+                              `${props.apis[parseInt(props.param)-1].name} Screw Theory Configuration`}
                 </h3>
             
-                {param === "default" ?
+                {props.param === "default" ?
                       <table>
                         <tbody>
                           {/* header */}
@@ -112,7 +76,7 @@ export default function ConfigRobotComponent() {
                             <th>S0x</th>
                             <th>S0y</th>
                             <th>S0z</th>
-                          </tr>
+                          </tr> 
                           {/* body */}
                           <tr>
                             <td>-</td>
@@ -129,7 +93,7 @@ export default function ConfigRobotComponent() {
                       </table>                          
                 :
                       <table>
-                        <tbody>
+                        <tbody> 
                           {/* header */}
                           <tr>
                             <th rowSpan={2}>Joint</th>
@@ -145,9 +109,9 @@ export default function ConfigRobotComponent() {
                             <th>S0x</th>
                             <th>S0y</th>
                             <th>S0z</th>
-                          </tr>
+                          </tr> 
                           {/* body */}
-                          {joints.map((joint,key) => (
+                          {props.joints.map((joint,key) => (
                             <tr key={joint.id}>
                               <td>{joint.name}</td>
                               <td>{joint.screw_s_x}</td>
@@ -163,16 +127,16 @@ export default function ConfigRobotComponent() {
                         </tbody>
                       </table>  
                     }
-                </div>
-                <div className={toggleTabState === 2 ? "tabcontent active-content" : "tabcontent"}>
-                  <h3>{param === "default" ? 
+               </div>
+                 <div className={toggleTabState === 2 ? "tabcontent active-content" : "tabcontent"}>
+                  <h3>{props.param === "default" ? 
                                 'Screw Theory Configuration' : 
-                                `${apis[parseInt(param)-1].name} Denavit Hartenberg Configuration`}
+                                `${props.apis[parseInt(props.param)-1].name} Denavit Hartenberg Configuration`}
                   </h3>  
 
-                  {param === "default" ?  
+                  {props.param === "default" ?  
                     <table>
-                      <tbody>
+                      <tbody> 
                         {/* header */}                     
                         <tr>
                           <th>Joint</th>
@@ -180,7 +144,7 @@ export default function ConfigRobotComponent() {
                           <th>d</th>
                           <th>alpha</th>
                           <th>theta</th>
-                        </tr>
+                        </tr> 
                         {/* body */}
                         <tr>
                           <td>-</td>
@@ -201,9 +165,9 @@ export default function ConfigRobotComponent() {
                           <th>d</th>
                           <th>alpha</th>
                           <th>theta</th>
-                        </tr>
+                        </tr> 
                         {/* body */}
-                        {joints.map((joint,key) => (
+                        {props.joints.map((joint,key) => (
                           <tr key={joint.id}>
                             <td>{joint.name}</td>
                             <td>{joint.denavit_a}</td>
@@ -214,12 +178,12 @@ export default function ConfigRobotComponent() {
                         ))}     
                       </tbody>
                     </table>
-                  }
+                  } 
                 </div>
 
-          </fieldset>
+          </fieldset> 
       
-        </div>
+        </div> 
       </div>
 
     </div> //</container>     
