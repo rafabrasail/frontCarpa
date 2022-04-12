@@ -4,9 +4,14 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import Stats from 'three/examples/jsm/libs/stats.module'
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import ConfigRobotComponent, {joints} from './robot_config';
+
+
 const Base3dComponent = () => {
   const mountRef = useRef(null);
   let model
+
+  // console.log(joints)
 
   useEffect(() => {
     //Data from the canvas

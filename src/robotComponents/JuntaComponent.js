@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import ConfigRobotComponent from './robot_config';
 // import { Container, Control, Label, Radio, Column, Card, Title, Field, Checkbox, Input } from 'rbx';
 // import { Control, Field, Input, Label } from 'rbx';
 import axios from "axios"
@@ -29,7 +30,9 @@ import ConfigRobotComponent from "./robot_config";
 
 export default function JuntaComponent(props) {
 
-    
+    console.log(joints)
+
+
     // state = {
     //     robot: null
     // };
